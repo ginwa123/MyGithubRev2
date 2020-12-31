@@ -35,7 +35,7 @@ import org.junit.runners.MethodSorters
 @RunWith(AndroidJUnit4::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @LargeTest
-class ExampleInstrumentedTest {
+class MyInstrumentTest {
 
 
     private lateinit var device: UiDevice
