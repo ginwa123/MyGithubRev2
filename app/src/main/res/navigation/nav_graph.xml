@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/searchFragment">
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.m.ginwa.favorite.ui.FavoriteFragment"
+        android:label="@string/favorites"
+        tools:layout="@layout/fragment_favorite">
+        <action
+            android:id="@+id/action_favoriteFragment_to_nav_detail_graph"
+            app:destination="@id/nav_detail_graph"
+        />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.m.ginwa.setting.ui.SettingFragment"
+        android:label="@string/setting">
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.m.ginwa.mygithubrev2.ui.searchfragment.SearchFragment"
+        android:label="MyGithubRev2"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_self"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_searchFragment_to_nav_detail_graph"
+            app:destination="@id/nav_detail_graph"
+          />
+        <action
+            android:id="@+id/action_searchFragment_to_favoriteFragment"
+            app:destination="@id/favoriteFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_searchFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <navigation
+        android:id="@+id/nav_detail_graph"
+        app:startDestination="@id/detailUserFragment">
+        <fragment
+            android:id="@+id/followingsFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.followingfragment.FollowingsFragment"
+            android:label="fragment_followings"
+            tools:layout="@layout/fragment_followings" />
+        <fragment
+            android:id="@+id/bioFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.biofragment.BioFragment"
+            android:label="fragment_bio"
+            tools:layout="@layout/fragment_bio" />
+        <fragment
+            android:id="@+id/followersFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.followersfragment.FollowersFragment"
+            android:label="fragment_followers"
+            tools:layout="@layout/fragment_followers" />
+        <fragment
+            android:id="@+id/detailUserFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.DetailUserFragment"
+            android:label="{login}"
+            tools:layout="@layout/fragment_detail_user">
+            <action
+                android:id="@+id/action_detailUserFragment_self"
+                app:destination="@id/detailUserFragment"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"
+                app:popUpToInclusive="true" />
+        </fragment>
+    </navigation>
+</navigation>

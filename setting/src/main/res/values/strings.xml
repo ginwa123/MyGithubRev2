@@ -1,0 +1,5 @@
+<resources>
+    <string name="display">Display</string>
+    <string name="theme">Theme</string>
+    <string name="system_default">System Default</string>
+</resources>

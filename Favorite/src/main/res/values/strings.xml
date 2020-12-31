@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="doesn_t_have_favorite_users">Doesn\'t have favorite users</string>
+    <string name="delete">Delete</string>
+    <string name="undo">Undo</string>
+    <string name="from_list">From List</string>
+
+</resources>
