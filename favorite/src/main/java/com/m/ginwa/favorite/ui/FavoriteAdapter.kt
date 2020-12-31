@@ -62,10 +62,8 @@ class FavoriteAdapter(
     override fun getItemCount(): Int = dataSets.size
 
     fun updateDataSets(dataSets: List<User>) {
-        if (this.dataSets != dataSets) {
-            val diffResult = DiffUtil.calculateDiff(UserDiffUtil(this.dataSets, dataSets))
-            diffResult.dispatchUpdatesTo(this)
-        }
+        val diffResult = DiffUtil.calculateDiff(UserDiffUtil(this.dataSets, dataSets))
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun deleteData(adapterPosition: Int) {

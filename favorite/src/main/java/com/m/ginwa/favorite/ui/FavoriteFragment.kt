@@ -43,6 +43,9 @@ class FavoriteFragment : Fragment() {
             )
             .build()
             .inject(this)
+        lifecycleScope.launch {
+            fragmentVm.getUsersFavorite(true)
+        }
     }
 
 
@@ -63,7 +66,6 @@ class FavoriteFragment : Fragment() {
 
     private fun loadUsers() {
         lifecycleScope.launch {
-            fragmentVm.getUsersFavorite(true)
             fragmentVm.users?.removeObservers(viewLifecycleOwner)
             fragmentVm.users?.observe(viewLifecycleOwner, { result ->
                 when (result) {

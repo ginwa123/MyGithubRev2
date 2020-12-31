@@ -1,5 +1,5 @@
 include ':setting'
-include ':Favorite'
+include ':favorite'
 include ':core'
 include ':app'
 rootProject.name = "MyGithubRev2"
