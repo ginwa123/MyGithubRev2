@@ -18,6 +18,7 @@ android {
         buildConfigField("String", "GITHUB_TOKEN", '"e22305df3af0579295c1657a82141d84ac243f32"')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -45,6 +46,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    api 'androidx.test.espresso:espresso-idling-resource:3.3.0'
 
     api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
 
@@ -80,5 +82,5 @@ dependencies {
 
     api 'androidx.preference:preference-ktx:1.1.1'
 
-
+    api 'androidx.multidex:multidex:2.0.1'
 }

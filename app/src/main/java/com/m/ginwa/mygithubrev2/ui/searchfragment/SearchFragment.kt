@@ -115,14 +115,16 @@ class SearchFragment : Fragment() {
                     when (result) {
                         is Result.Success -> setUsers(result.data)
                         is Result.Error -> setError(result.exception.message)
-                        Result.Loading -> {
-                            binding?.swipeRefreshLayout?.isRefreshing = true
-                            activityVm.progressbarListener.value = true
-                        }
+                        Result.Loading -> setLoading()
                     }
                 })
             }
         }
+    }
+
+    private fun setLoading() {
+        binding?.swipeRefreshLayout?.isRefreshing = true
+        activityVm.progressbarListener.value = true
     }
 
     private fun setUsers(dataSets: List<User>) {

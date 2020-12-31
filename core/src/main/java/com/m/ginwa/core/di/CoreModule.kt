@@ -28,6 +28,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object CoreModule {
 
+
     private const val BASE_URL = "https://api.github.com/"
 
     @Singleton
@@ -72,8 +73,9 @@ object CoreModule {
 
     @Provides
     @Singleton
-    fun provideDb(@ApplicationContext context: Context): GithubDb =
-        Room.databaseBuilder(context, GithubDb::class.java, "github.db").build()
+    fun provideDb(@ApplicationContext context: Context): GithubDb {
+        return Room.databaseBuilder(context, GithubDb::class.java, "github.db").build()
+    }
 
     @Provides
     @Singleton

@@ -58,7 +58,9 @@ class GithubRepository(
                 val userRemote = UserResponse.mapToEntity(dataRemote)
                 if (dataLocal != null) {
                     val userLocal = User.mapToEntity(dataLocal)
-                    if (userLocal.isFavorite == true) userRemote.isFavorite = userLocal.isFavorite
+                    if (userLocal.isFavorite != null) {
+                        userRemote.isFavorite = userLocal.isFavorite
+                    }
                 }
                 localDataSource.insertUser(userRemote)
             }

@@ -12,6 +12,7 @@ abstract class NetworkBoundResult<DomainType, ResponseType> {
         result = flow {
             val localDb = loadFromDB()
             if (localDb != null) {
+                emit(Result.Loading)
                 emit(Result.Success(localDb.first()))
                 if (shouldFetch(data = localDb.first())) {
                     emit(Result.Loading)

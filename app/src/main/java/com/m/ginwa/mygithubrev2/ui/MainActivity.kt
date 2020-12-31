@@ -12,6 +12,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.m.ginwa.core.utils.EspressoIdlingResources
 import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,8 +72,13 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             // observe progressbar (loading)
             activityVm.progressbarListener.observe(this@MainActivity, { isLoading ->
-                if (isLoading) progressBar.visibility = View.VISIBLE
-                else progressBar.visibility = View.GONE
+                if (isLoading) {
+                    EspressoIdlingResources.increment()
+                    progressBar.visibility = View.VISIBLE
+                } else {
+                    progressBar.visibility = View.GONE
+                    EspressoIdlingResources.decrement()
+                }
             })
             // observe image toolbar
             activityVm.imToolbarListener.observe(this@MainActivity, { im ->

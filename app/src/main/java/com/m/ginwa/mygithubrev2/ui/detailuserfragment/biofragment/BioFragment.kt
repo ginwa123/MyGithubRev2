@@ -75,8 +75,6 @@ class BioFragment : Fragment() {
                     Result.Loading -> setLoading()
                 }
             })
-
-
         }
     }
 
