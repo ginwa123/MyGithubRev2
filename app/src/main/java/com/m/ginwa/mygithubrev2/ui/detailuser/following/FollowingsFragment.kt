@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.m.ginwa.core.data.Result
 import com.m.ginwa.core.domain.model.Following
 import com.m.ginwa.core.utils.addDividerLine
-import com.m.ginwa.core.utils.showToast
+import com.m.ginwa.core.utils.showToastError
 import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.FragmentFollowingsBinding
 import com.m.ginwa.mygithubrev2.ui.ActivityViewModel
@@ -59,14 +59,15 @@ class FollowingsFragment : Fragment() {
         fragmentVm.followings.observe(viewLifecycleOwner, { result ->
             when (result) {
                 is Result.Success -> setUserFollowings(result.data)
-                is Result.Error -> setError(result.exception.message)
+                is Result.Error -> setError(result.exception)
                 Result.Loading -> setLoading()
             }
         })
     }
 
-    private fun setError(message: String?) {
-        requireActivity().showToast(message)
+    private fun setError(exception: Exception) {
+        requireActivity().showToastError(exception)
+        setCompleted()
     }
 
     private fun setCompleted() {

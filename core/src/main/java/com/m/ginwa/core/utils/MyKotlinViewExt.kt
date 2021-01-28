@@ -7,10 +7,20 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.m.ginwa.core.R
+import java.net.UnknownHostException
 import java.util.*
 
 fun Activity.showToast(message: String?) {
     message?.let { Toast.makeText(this.application, it, Toast.LENGTH_SHORT).show() }
+}
+
+fun Activity.showToastError(e: Exception) {
+    if (e is UnknownHostException) {
+        this.showToast(getString(R.string.cannot_connect_to_internet))
+    } else {
+        this.showToast(e.message)
+    }
 }
 
 fun RecyclerView.addDividerLine(

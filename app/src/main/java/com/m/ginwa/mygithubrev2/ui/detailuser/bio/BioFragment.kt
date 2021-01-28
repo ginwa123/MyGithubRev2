@@ -13,7 +13,7 @@ import androidx.fragment.app.viewModels
 import com.m.ginwa.core.data.Result
 import com.m.ginwa.core.domain.model.User
 import com.m.ginwa.core.utils.EspressoIdlingResources
-import com.m.ginwa.core.utils.showToast
+import com.m.ginwa.core.utils.showToastError
 import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.FragmentBioBinding
 import com.m.ginwa.mygithubrev2.ui.ActivityViewModel
@@ -67,15 +67,15 @@ class BioFragment : Fragment() {
         fragmentVm.user.observe(viewLifecycleOwner, { result ->
             when (result) {
                 is Result.Success -> setUserProfile(result.data)
-                is Result.Error -> setError(result.exception.message)
+                is Result.Error -> setError(result.exception)
                 Result.Loading -> setLoading()
             }
         })
     }
 
 
-    private fun setError(message: String?) {
-        requireActivity().showToast(message)
+    private fun setError(exception: Exception) {
+        requireActivity().showToastError(exception)
         setCompleted()
     }
 

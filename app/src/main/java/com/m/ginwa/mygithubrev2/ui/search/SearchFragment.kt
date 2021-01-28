@@ -15,12 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.m.ginwa.core.data.Result
 import com.m.ginwa.core.domain.model.User
 import com.m.ginwa.core.utils.addDividerLine
-import com.m.ginwa.core.utils.showToast
+import com.m.ginwa.core.utils.showToastError
 import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.FragmentSearchBinding
 import com.m.ginwa.mygithubrev2.ui.ActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.net.UnknownHostException
 
 
 @AndroidEntryPoint
@@ -141,11 +140,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun setError(exception: Exception) {
-        if (exception is UnknownHostException) {
-            requireActivity().showToast(getString(R.string.cannot_connect_to_internet))
-        } else {
-            requireActivity().showToast(exception.message)
-        }
+        requireActivity().showToastError(exception)
         setCompleted()
     }
 

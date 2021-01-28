@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="cannot_connect_to_internet">Cannot connect to internet</string>
 </resources>
