@@ -12,7 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.m.ginwa.core.data.Result
 import com.m.ginwa.core.domain.model.User
-import com.m.ginwa.core.utils.EspressoIdlingResources
 import com.m.ginwa.core.utils.showToastError
 import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.FragmentBioBinding
@@ -80,13 +79,11 @@ class BioFragment : Fragment() {
     }
 
     private fun setLoading() {
-        EspressoIdlingResources.increment()
         binding?.swipeRefreshLayout?.isRefreshing = true
         activityVm.progressbarListener.value = true
     }
 
     private fun setCompleted() {
-        if (fragmentVm.userData != null) EspressoIdlingResources.decrement()
         activityVm.progressbarListener.value = false
         binding?.swipeRefreshLayout?.isRefreshing = false
     }
