@@ -17,4 +17,8 @@
     <string name="title_setting">Setting</string>
     <string name="setting">Settings</string>
     <string name="favorites">Favorites</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="to_delete_favorite_users_swipe_right_or_left">To delete favorite users swipe list to right or left</string>
+    <string name="cannot_connect_to_internet">Cannot connect to internet</string>
+    <string name="image_user">Image User</string>
 </resources>

@@ -12,19 +12,24 @@
         <action
             android:id="@+id/action_favoriteFragment_to_nav_detail_graph"
             app:destination="@id/nav_detail_graph"
-        />
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_favoriteOnBoardFragment"
+            app:destination="@id/favoriteOnBoardFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.m.ginwa.setting.ui.SettingFragment"
-        android:label="@string/setting">
-    </fragment>
+        android:label="@string/setting" />
 
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.m.ginwa.mygithubrev2.ui.searchfragment.SearchFragment"
+        android:name="com.m.ginwa.mygithubrev2.ui.search.SearchFragment"
         android:label="MyGithubRev2"
         tools:layout="@layout/fragment_search">
         <action
@@ -37,7 +42,10 @@
         <action
             android:id="@+id/action_searchFragment_to_nav_detail_graph"
             app:destination="@id/nav_detail_graph"
-          />
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_searchFragment_to_favoriteFragment"
             app:destination="@id/favoriteFragment"
@@ -58,32 +66,35 @@
         app:startDestination="@id/detailUserFragment">
         <fragment
             android:id="@+id/followingsFragment"
-            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.followingfragment.FollowingsFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuser.following.FollowingsFragment"
             android:label="fragment_followings"
             tools:layout="@layout/fragment_followings" />
         <fragment
             android:id="@+id/bioFragment"
-            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.biofragment.BioFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuser.bio.BioFragment"
             android:label="fragment_bio"
             tools:layout="@layout/fragment_bio" />
         <fragment
             android:id="@+id/followersFragment"
-            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.followersfragment.FollowersFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuser.followers.FollowersFragment"
             android:label="fragment_followers"
             tools:layout="@layout/fragment_followers" />
         <fragment
             android:id="@+id/detailUserFragment"
-            android:name="com.m.ginwa.mygithubrev2.ui.detailuserfragment.DetailUserFragment"
+            android:name="com.m.ginwa.mygithubrev2.ui.detailuser.DetailUserFragment"
             android:label="{login}"
-            tools:layout="@layout/fragment_detail_user">
-            <action
-                android:id="@+id/action_detailUserFragment_self"
-                app:destination="@id/detailUserFragment"
-                app:enterAnim="@anim/nav_default_enter_anim"
-                app:exitAnim="@anim/nav_default_exit_anim"
-                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-                app:popExitAnim="@anim/nav_default_pop_exit_anim"
-                app:popUpToInclusive="true" />
-        </fragment>
+            tools:layout="@layout/fragment_detail_user" />
+        <action
+            android:id="@+id/action_nav_detail_graph_self"
+            app:destination="@id/nav_detail_graph"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </navigation>
+    <dialog
+        android:id="@+id/favoriteOnBoardFragment"
+        android:name="com.m.ginwa.favorite.ui.FavoriteOnBoardFragment"
+        android:label="FavoriteOnBoardFragment"
+        app:moduleName="MyGithubRev2.favorite" />
 </navigation>

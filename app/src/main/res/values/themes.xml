@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.MyGithubRev2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="tabSelectedTextColor">@color/purple_500</item>
@@ -14,16 +14,22 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
-        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent
-        </item>
         <item name="android:windowTranslucentStatus">true</item>
 
         <item name="actionBarTheme">@style/AppTheme.AppBarOverlay</item>
+        <item name="materialCardViewStyle">@style/Theme.MyGithubRev2.Widget.CardView</item>
     </style>
+
+    <style name="Theme.MyGithubRev2.Widget.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+
+    </style>
+
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
-
 
 
 </resources>

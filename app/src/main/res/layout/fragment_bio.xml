@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    tools:context=".ui.detailuserfragment.biofragment.BioFragment">
+    tools:context=".ui.detailuser.bio.BioFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -21,15 +20,14 @@
             android:layout_marginEnd="8dp"
             android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tv_name_container"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                tools:visibility="visible"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
+
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/tv_name"
@@ -39,16 +37,15 @@
                     android:layout_marginStart="8dp"
                     tools:hint="@string/example" />
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tv_company_container"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
+
                 tools:visibility="visible">
 
                 <TextView
@@ -57,18 +54,17 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|start"
                     android:layout_marginStart="8dp"
-                    android:drawableStart="@drawable/ic_baseline_location_city_24"
+                    app:drawableStartCompat="@drawable/ic_baseline_location_city_24"
                     tools:hint="@string/example" />
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tv_location_container"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
+
                 tools:visibility="visible">
 
                 <TextView
@@ -78,18 +74,17 @@
 
                     android:layout_gravity="center|start"
                     android:layout_marginStart="8dp"
-                    android:drawableStart="@drawable/ic_baseline_location_on_24"
+                    app:drawableStartCompat="@drawable/ic_baseline_location_on_24"
                     tools:hint="@string/example" />
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tv_repository_container"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
+
                 tools:visibility="gone">
 
                 <TextView
@@ -99,16 +94,15 @@
                     android:layout_gravity="center|start"
                     android:layout_marginStart="8dp"
                     tools:hint="@string/example" />
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tv_followers_container"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
+
                 tools:visibility="gone">
 
                 <TextView
@@ -118,16 +112,15 @@
                     android:layout_gravity="center|start"
                     android:layout_marginStart="8dp"
                     tools:hint="@string/example" />
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/tv_following_container"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:visibility="gone"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp"
+
                 tools:visibility="gone">
 
                 <TextView
@@ -137,7 +130,7 @@
                     android:layout_gravity="center|start"
                     android:layout_marginStart="8dp"
                     tools:hint="@string/example" />
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
 

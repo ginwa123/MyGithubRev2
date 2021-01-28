@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="translucentScrimBottom">#2A000000</color>
     <color name="translucentScrimBottomCenter">#0D000000</color>
+    <color name="pink">#FFFD0056</color>
+    <color name="card_background_color_grey">#121212</color>
+    <color name="background_grey">#000000</color>
 </resources>

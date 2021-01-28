@@ -1,11 +1,8 @@
 package com.m.ginwa.core.domain.model
 
-import android.os.Parcelable
 import com.m.ginwa.core.data.source.local.entity.UserEntity
-import kotlinx.parcelize.Parcelize
 
 
-@Parcelize
 data class User(
     val avatarUrl: String?,
     val company: String?,
@@ -17,7 +14,7 @@ data class User(
 
     val followers: List<Follower>?,
     val following: List<Following>?,
-) : Parcelable {
+) {
     companion object {
         fun mapToEntity(input: User): UserEntity {
             return UserEntity(

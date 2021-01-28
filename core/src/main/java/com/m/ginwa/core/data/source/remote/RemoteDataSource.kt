@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import retrofit2.HttpException
+import timber.log.Timber
 
 class RemoteDataSource(private val endpoint: RetrofitEndpoint) {
 
@@ -32,6 +34,7 @@ class RemoteDataSource(private val endpoint: RetrofitEndpoint) {
     }
 
     private suspend fun <T> apiCall(service: suspend () -> T): Flow<ApiResponse<T>> {
+
         return flow {
             try {
                 val result = service.invoke()
@@ -44,9 +47,15 @@ class RemoteDataSource(private val endpoint: RetrofitEndpoint) {
                 } else {
                     emit(ApiResponse.Success(result))
                 }
+                Timber.d(result.toString())
+            } catch (e: HttpException) {
+                Timber.e(e)
+                emit(ApiResponse.Error(e))
             } catch (e: Exception) {
+                Timber.e(e)
                 emit(ApiResponse.Error(e))
             }
         }.flowOn(Dispatchers.IO)
     }
+
 }

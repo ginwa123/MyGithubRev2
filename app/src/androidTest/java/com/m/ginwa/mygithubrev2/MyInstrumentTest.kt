@@ -46,7 +46,6 @@ class MyInstrumentTest {
 
     @Before
     fun setUp() {
-        getInstrumentation().targetContext.deleteDatabase("github.db")
         IdlingRegistry.getInstance().register(EspressoIdlingResources.getEspressoIdlingResource())
         device = UiDevice.getInstance(getInstrumentation())
     }
@@ -54,7 +53,6 @@ class MyInstrumentTest {
     @After
     fun tearDown() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResources.getEspressoIdlingResource())
-        getInstrumentation().targetContext.deleteDatabase("github.db")
     }
 
     @Test
@@ -103,8 +101,6 @@ class MyInstrumentTest {
             )
         )
         checkDetail()
-
-
     }
 
 
@@ -205,6 +201,7 @@ class MyInstrumentTest {
                 withResourceName("recyclerView")
             )
         )
+        device.click(150, 150)
         recyclerView2.check(
             matches(
                 atPosition(

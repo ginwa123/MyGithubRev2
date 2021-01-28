@@ -1,14 +1,44 @@
 package com.m.ginwa.core.utils
 
-import android.content.Context
+import android.app.Activity
+import android.content.SharedPreferences
+import android.graphics.drawable.InsetDrawable
 import android.view.MotionEvent
 import android.widget.Toast
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
-fun Context.showToast(message: String?) {
-    message?.let { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
+fun Activity.showToast(message: String?) {
+    message?.let { Toast.makeText(this.application, it, Toast.LENGTH_SHORT).show() }
 }
 
+fun RecyclerView.addDividerLine(
+    dimenLeft: Int? = null,
+    dimenTop: Int? = null,
+    dimenRight: Int? = null,
+    dimenBot: Int? = null
+) {
+    val attrs = intArrayOf(android.R.attr.listDivider)
+    val a = this.context.obtainStyledAttributes(attrs)
+    val divider = a.getDrawable(0)
+    val insetLeft = dimenLeft?.let { this.context.resources.getDimensionPixelSize(it) }
+    val insetRight = dimenRight?.let { this.context.resources.getDimensionPixelSize(it) }
+    val insetTop = dimenTop?.let { this.context.resources.getDimensionPixelSize(it) }
+    val insetBot = dimenBot?.let { this.context.resources.getDimensionPixelSize(it) }
+    val insetDivider =
+        InsetDrawable(divider, insetLeft ?: 0, insetTop ?: 0, insetRight ?: 0, insetBot ?: 0)
+    a.recycle()
+    val itemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
+    itemDecoration.setDrawable(insetDivider)
+    this.addItemDecoration(itemDecoration)
+}
+
+inline fun <reified T : Enum<T>> SharedPreferences.getEnum(key: String, defaultValue: String): T {
+    val value = this.getString(key, defaultValue)?.toUpperCase(Locale.ROOT)
+    if (value != null) return enumValueOf(value)
+    return enumValueOf(defaultValue)
+}
 
 
 // https://medium.com/@BladeCoder/fixing-recyclerview-nested-scrolling-in-opposite-direction-f587be5c1a04

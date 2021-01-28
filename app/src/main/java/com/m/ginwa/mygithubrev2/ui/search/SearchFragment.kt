@@ -1,4 +1,4 @@
-package com.m.ginwa.mygithubrev2.ui.searchfragment
+package com.m.ginwa.mygithubrev2.ui.search
 
 import android.os.Bundle
 import android.view.*
@@ -7,7 +7,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -15,18 +14,19 @@ import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.m.ginwa.core.data.Result
 import com.m.ginwa.core.domain.model.User
+import com.m.ginwa.core.utils.addDividerLine
 import com.m.ginwa.core.utils.showToast
 import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.FragmentSearchBinding
 import com.m.ginwa.mygithubrev2.ui.ActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
     private lateinit var searchView: androidx.appcompat.widget.SearchView
-    private lateinit var searchAdapter: SearchAdapter
+    private var searchAdapter: SearchAdapter? = null
     private lateinit var navController: NavController
     private var login: String? = null
     private val fragmentVm: SearchUsersViewModel by viewModels()
@@ -59,18 +59,24 @@ class SearchFragment : Fragment() {
 
     private fun setAdapter() {
         binding?.apply {
-            searchAdapter =
-                SearchAdapter(requireContext(), dataSets = fragmentVm.dataSets)
-            searchAdapter.onClick = {
+            activityVm.btFavoriteListener.value = null
+            searchAdapter = SearchAdapter(requireContext(), fragmentVm.dataSets)
+            searchAdapter?.onClick = {
                 navController.navigate(R.id.action_searchFragment_to_nav_detail_graph, it)
+
             }
+
             recyclerView.apply {
                 adapter = searchAdapter
                 layoutManager = LinearLayoutManager(requireContext())
                 isNestedScrollingEnabled = false
+                addDividerLine(
+                    dimenLeft = R.dimen.divider_line_left,
+                    dimenRight = R.dimen.divider_line_right
+                )
             }
             swipeRefreshLayout.setOnRefreshListener {
-                searchAdapter.clearDataSets()
+                searchAdapter?.clearDataSets()
                 loadUsers(login ?: "ginwa")
             }
         }
@@ -107,18 +113,16 @@ class SearchFragment : Fragment() {
     }
 
     private fun loadUsers(login: String) {
-        lifecycleScope.launch {
-            if (searchAdapter.dataSets.isEmpty()) {
-                fragmentVm.getUsers(login)
-                fragmentVm.users?.removeObservers(viewLifecycleOwner)
-                fragmentVm.users?.observe(viewLifecycleOwner, { result ->
-                    when (result) {
-                        is Result.Success -> setUsers(result.data)
-                        is Result.Error -> setError(result.exception.message)
-                        Result.Loading -> setLoading()
-                    }
-                })
-            }
+        if (searchAdapter?.dataSets?.isEmpty() == true) {
+            fragmentVm.getUsers(login)
+            fragmentVm.users.removeObservers(viewLifecycleOwner)
+            fragmentVm.users.observe(viewLifecycleOwner, { result ->
+                when (result) {
+                    is Result.Success -> setUsers(result.data)
+                    is Result.Error -> setError(result.exception)
+                    Result.Loading -> setLoading()
+                }
+            })
         }
     }
 
@@ -129,15 +133,19 @@ class SearchFragment : Fragment() {
 
     private fun setUsers(dataSets: List<User>) {
         if (dataSets.isNotEmpty()) {
-            searchAdapter.updateDataSets(dataSets)
+            searchAdapter?.updateDataSets(dataSets)
             fragmentVm.dataSets.clear()
             fragmentVm.dataSets.addAll(dataSets)
         }
         setCompleted()
     }
 
-    private fun setError(message: String?) {
-        requireContext().showToast(message)
+    private fun setError(exception: Exception) {
+        if (exception is UnknownHostException) {
+            requireActivity().showToast(getString(R.string.cannot_connect_to_internet))
+        } else {
+            requireActivity().showToast(exception.message)
+        }
         setCompleted()
     }
 
@@ -154,6 +162,13 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding?.apply {
+            recyclerView.recycledViewPool.clear()
+            recyclerView.adapter = null
+            recyclerView.layoutManager = null
+            swipeRefreshLayout.setOnRefreshListener(null)
+        }
+        searchAdapter = null
         _binding = null
     }
 }

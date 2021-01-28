@@ -13,6 +13,6 @@ interface GithubUseCase {
     suspend fun getFollowers(loginParent: String): Flow<Result<List<Follower>>>
     suspend fun getFollowings(loginParent: String): Flow<Result<List<Following>>>
     suspend fun insertOrUpdateUser(user: User)
-    suspend fun getUsersFavorite(isFavorite: Boolean): Flow<Result<List<User>>>
+    suspend fun getUsersFavorite(isFavorite: Boolean): Flow<List<User>>
 
 }

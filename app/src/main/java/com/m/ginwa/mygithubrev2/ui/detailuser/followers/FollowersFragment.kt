@@ -1,4 +1,4 @@
-package com.m.ginwa.mygithubrev2.ui.detailuserfragment.followingfragment
+package com.m.ginwa.mygithubrev2.ui.detailuser.followers
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,76 +8,71 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.m.ginwa.core.data.Result
-import com.m.ginwa.core.domain.model.Following
+import com.m.ginwa.core.domain.model.Follower
+import com.m.ginwa.core.utils.addDividerLine
 import com.m.ginwa.core.utils.showToast
 import com.m.ginwa.mygithubrev2.R
-import com.m.ginwa.mygithubrev2.databinding.FragmentFollowingsBinding
+import com.m.ginwa.mygithubrev2.databinding.FragmentFollowersBinding
 import com.m.ginwa.mygithubrev2.ui.ActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FollowingsFragment : Fragment() {
+class FollowersFragment : Fragment() {
     private var login: String? = null
-    private lateinit var adapter: FollowingsAdapter
-    private var _binding: FragmentFollowingsBinding? = null
+    private var adapter: FollowersAdapter? = null
+    private var _binding: FragmentFollowersBinding? = null
     private val binding get() = _binding
-    private val fragmentVm: FollowingsViewModel by viewModels()
+    private val fragmentVm: FollowersViewModel by viewModels()
     private val activityVm: ActivityViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         login = arguments?.getString("login")
-        lifecycleScope.launch {
-            fragmentVm.getFollowings(login ?: "ginwa")
-        }
+        fragmentVm.loginParent = login ?: "ginwa"
+        fragmentVm.getFollowers(login ?: "ginwa")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFollowingsBinding.inflate(inflater, container, false)
+        _binding = FragmentFollowersBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
-        setFollowingsDataListener()
+        setFollowersDatListener()
         binding?.swipeRefreshLayout?.setOnRefreshListener {
-            lifecycleScope.launch {
-                fragmentVm.getFollowings(login ?: "ginwa")
-                setFollowingsDataListener()
-            }
+            fragmentVm.getFollowers(login ?: "ginwa")
+            setFollowersDatListener()
         }
     }
 
-    private fun setFollowingsDataListener() {
-        lifecycleScope.launch {
-            fragmentVm.followings?.removeObservers(viewLifecycleOwner)
-            fragmentVm.followings?.observe(viewLifecycleOwner, { result ->
-                when (result) {
-                    is Result.Success -> setUserFollowings(result.data)
-                    is Result.Error -> setError(result.exception.message)
-                    Result.Loading -> setLoading()
-                }
-            })
-        }
+    private fun setFollowersDatListener() {
+        fragmentVm.followers.removeObservers(viewLifecycleOwner)
+        fragmentVm.followers.observe(viewLifecycleOwner, { result ->
+            when (result) {
+                is Result.Success -> setUserFollowers(result.data)
+                is Result.Error -> setError(result.exception.message)
+                Result.Loading -> setLoading()
+            }
+        })
     }
 
     private fun setError(message: String?) {
-        requireContext().showToast(message)
+        requireActivity().showToast(message)
+        setCompleted()
     }
 
     private fun setCompleted() {
         activityVm.progressbarListener.value = false
         binding?.swipeRefreshLayout?.isRefreshing = false
-        if (fragmentVm.followingsDataSets.isEmpty()) {
+        if (fragmentVm.followersDataSets.isEmpty()) {
             binding?.tvNoticeContainer?.visibility = View.VISIBLE
         } else {
             binding?.tvNoticeContainer?.visibility = View.GONE
@@ -89,24 +84,28 @@ class FollowingsFragment : Fragment() {
         activityVm.progressbarListener.value = true
     }
 
-    private fun setUserFollowings(dataSets: List<Following>) {
-        adapter.updateDataSets(dataSets)
-        fragmentVm.followingsDataSets.clear()
-        fragmentVm.followingsDataSets.addAll(dataSets)
+    private fun setUserFollowers(dataSets: List<Follower>) {
+        adapter?.updateDataSets(dataSets)
+        fragmentVm.followersDataSets.clear()
+        fragmentVm.followersDataSets.addAll(dataSets)
         setCompleted()
     }
 
 
     private fun setAdapter() {
         binding?.apply {
-            adapter = FollowingsAdapter(requireContext(), fragmentVm.followingsDataSets)
-            adapter.onClick = {
-                findNavController().navigate(R.id.action_detailUserFragment_self, it)
+            adapter = FollowersAdapter(requireContext(), fragmentVm.followersDataSets)
+            adapter?.onClick = {
+                findNavController().navigate(R.id.action_nav_detail_graph_self, it)
             }
             recyclerView.apply {
-                adapter = this@FollowingsFragment.adapter
+                adapter = this@FollowersFragment.adapter
                 layoutManager = LinearLayoutManager(requireContext())
                 isNestedScrollingEnabled = false
+                addDividerLine(
+                    dimenLeft = R.dimen.divider_line_left,
+                    dimenRight = R.dimen.divider_line_right
+                )
             }
         }
     }
@@ -114,12 +113,21 @@ class FollowingsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding?.apply {
+            recyclerView.recycledViewPool.clear()
+            recyclerView.adapter = null
+            recyclerView.layoutManager = null
+            swipeRefreshLayout.setOnRefreshListener(null)
+
+        }
+        adapter = null
         _binding = null
     }
 
     companion object {
+
         fun newInstance(login: String?): Fragment {
-            val fragment = FollowingsFragment()
+            val fragment = FollowersFragment()
             val bundle = bundleOf("login" to login)
             fragment.arguments = bundle
             return fragment

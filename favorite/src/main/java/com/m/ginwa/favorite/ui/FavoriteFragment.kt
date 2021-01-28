@@ -1,5 +1,6 @@
 package com.m.ginwa.favorite.ui
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.m.ginwa.core.data.Result
 import com.m.ginwa.core.di.CoreModuleDependencies
 import com.m.ginwa.core.domain.model.User
-import com.m.ginwa.core.utils.showToast
+import com.m.ginwa.core.utils.Constants
+import com.m.ginwa.core.utils.addDividerLine
 import com.m.ginwa.favorite.R
 import com.m.ginwa.favorite.databinding.FragmentFavoriteBinding
 import com.m.ginwa.favorite.di.DaggerFavoriteComponent
@@ -23,13 +24,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FavoriteFragment : Fragment() {
+    private lateinit var linearLayoutManager: LinearLayoutManager
     private var snackBar: Snackbar? = null
-    private lateinit var adapter: FavoriteAdapter
+    private var adapter: FavoriteAdapter? = null
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding
 
     @Inject
     lateinit var fragmentVm: FavoriteViewModel
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,10 +47,9 @@ class FavoriteFragment : Fragment() {
                 )
             )
             .build()
-            .inject(this)
-        lifecycleScope.launch {
-            fragmentVm.getUsersFavorite(true)
-        }
+            .injectFavoriteFragment(this)
+
+
     }
 
 
@@ -62,71 +66,78 @@ class FavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
         loadUsers()
+        setRecyclerView()
     }
 
     private fun loadUsers() {
-        lifecycleScope.launch {
-            fragmentVm.users?.removeObservers(viewLifecycleOwner)
-            fragmentVm.users?.observe(viewLifecycleOwner, { result ->
-                when (result) {
-                    is Result.Success -> setFavoritesUsers(result.data)
-                    is Result.Error -> setError(result.exception.message)
-                    Result.Loading -> {
-                    }
-                }
-            })
-        }
+        fragmentVm.users.removeObservers(viewLifecycleOwner)
+        fragmentVm.users.observe(viewLifecycleOwner, { result ->
+            setFavoritesUsers(result)
+        })
     }
 
-    private fun setError(message: String?) {
-        requireContext().showToast(message)
-        setCompleted()
-    }
 
     private fun setCompleted() {
         if (fragmentVm.dataSets.isEmpty()) {
             binding?.tvNoticeContainer?.visibility = View.VISIBLE
-        } else binding?.tvNoticeContainer?.visibility = View.GONE
+        } else {
+            binding?.tvNoticeContainer?.visibility = View.GONE
+            val isShowFavoriteOnBoard =
+                sharedPreferences.getBoolean(Constants.FAVORITE_ONBOARD, true)
+            if (isShowFavoriteOnBoard) {
+                findNavController()
+                    .navigate(com.m.ginwa.mygithubrev2.R.id.action_favoriteFragment_to_favoriteOnBoardFragment)
+            }
+        }
     }
 
     private fun setFavoritesUsers(data: List<User>) {
         if (data.isNotEmpty()) {
-            adapter.updateDataSets(data)
+            adapter?.updateDataSets(data)
             fragmentVm.dataSets.clear()
             fragmentVm.dataSets.addAll(data)
         }
         setCompleted()
     }
 
-    private fun setAdapter() {
+    private fun setRecyclerView() {
         binding?.apply {
-            adapter = FavoriteAdapter(requireContext(), dataSets = fragmentVm.dataSets)
-            val itemTouchHelper = ItemTouchHelper(SwipeToDelete(adapter))
-            adapter.onClick = {
-                findNavController().navigate(
-                    com.m.ginwa.mygithubrev2.R.id.action_favoriteFragment_to_nav_detail_graph,
-                    it
-                )
-            }
-            adapter.onDelete = { position, user ->
-                lifecycleScope.launch {
-                    user.isFavorite = false
-                    fragmentVm.updateUser(user)
-                    showUndoSnackBar(user)
-                }
-            }
+            val itemTouchHelper = ItemTouchHelper(SwipeToDelete(this@FavoriteFragment.adapter))
+            linearLayoutManager = LinearLayoutManager(requireContext())
             recyclerView.apply {
                 adapter = this@FavoriteFragment.adapter
-                layoutManager = LinearLayoutManager(requireContext())
+                layoutManager = linearLayoutManager
                 isNestedScrollingEnabled = false
                 itemTouchHelper.attachToRecyclerView(this)
+                itemAnimator = null
+                addDividerLine(
+                    dimenLeft = com.m.ginwa.mygithubrev2.R.dimen.divider_line_left,
+                    dimenRight = com.m.ginwa.mygithubrev2.R.dimen.divider_line_right
+                )
+            }
+        }
+    }
+
+    private fun setAdapter() {
+        adapter = FavoriteAdapter(requireContext(), dataSets = fragmentVm.dataSets)
+        adapter?.onClick = {
+            findNavController().navigate(
+                com.m.ginwa.mygithubrev2.R.id.action_favoriteFragment_to_nav_detail_graph,
+                it
+            )
+        }
+        adapter?.onDelete = { _, user ->
+            lifecycleScope.launch {
+                user.isFavorite = false
+                fragmentVm.updateUser(user)
+                showUndoSnackBar(user)
             }
         }
     }
 
     private fun showUndoSnackBar(user: User) {
         val message =
-            "${getString(R.string.delete)} ${user.login} ${getString(R.string.from_list)}"
+            StringBuilder("${getString(R.string.delete)} ${user.login} ${getString(R.string.from_list)}")
         snackBar = Snackbar.make(
             requireView(),
             message,
@@ -146,6 +157,12 @@ class FavoriteFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding?.apply {
+            recyclerView.recycledViewPool.clear()
+            recyclerView.adapter = null
+            recyclerView.layoutManager = null
+        }
+        adapter = null
         _binding = null
     }
 

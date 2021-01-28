@@ -1,4 +1,4 @@
-package com.m.ginwa.mygithubrev2.ui.detailuserfragment
+package com.m.ginwa.mygithubrev2.ui.detailuser
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,9 +15,14 @@ import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.FragmentDetailUserBinding
 import com.m.ginwa.mygithubrev2.ui.ActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class DetailUserFragment : Fragment() {
+
+    private var isFastAnimate: Boolean = false
+    private var isStartOnce: Boolean = true
+    private var mediator: TabLayoutMediator? = null
     private var login: String? = null
     private lateinit var viewPagerAdapter: UserPager
     private var _binding: FragmentDetailUserBinding? = null
@@ -26,11 +31,7 @@ class DetailUserFragment : Fragment() {
         get() {
             return this[0] as RecyclerView
         }
-    private var startOnce = true
     private val activityVm: ActivityViewModel by activityViewModels()
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,6 +39,7 @@ class DetailUserFragment : Fragment() {
         _binding = FragmentDetailUserBinding.inflate(inflater, container, false)
         return binding?.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,45 +49,67 @@ class DetailUserFragment : Fragment() {
 
     private fun setViewPager() {
         binding?.apply {
-            viewPagerAdapter = UserPager(childFragmentManager, lifecycle, login)
-            viewPager.recyclerView.enforceSingleScrollDirection()
+            viewPagerAdapter = UserPager(childFragmentManager, viewLifecycleOwner.lifecycle, login)
+
             viewPager.apply {
+                recyclerView.enforceSingleScrollDirection()
                 adapter = viewPagerAdapter
                 offscreenPageLimit = 3
+                registerOnPageChangeCallback(viewpagerCallback)
             }
-            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            mediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 when (position) {
                     0 -> tab.text = getString(R.string.bio)
                     1 -> tab.text = getString(R.string.followers)
                     2 -> tab.text = getString(R.string.following)
                 }
-            }.attach()
+            }
+            mediator?.attach()
 
-            viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    if (position == 0) {
-                        if (startOnce) {
-                            activityVm.isExpandToolbar.value =
-                                mapOf("isExpand" to true, "isAnimate" to false)
-                            startOnce = false
-                        } else {
-                            activityVm.isExpandToolbar.value =
-                                mapOf("isExpand" to true, "isAnimate" to true)
-                        }
 
-                    } else {
-                        activityVm.isExpandToolbar.value =
+        }
+    }
+
+
+    private val viewpagerCallback: ViewPager2.OnPageChangeCallback =
+        object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (isStartOnce) {
+                    isStartOnce = false
+                } else {
+                    Timber.d("viewpager at $position")
+                    if (position != 0) {
+                        activityVm.isExpandToolbarListener.value =
                             mapOf("isExpand" to false, "isAnimate" to true)
+                    } else {
+                        if (isFastAnimate) {
+                            activityVm.isExpandToolbarListener.value =
+                                mapOf("isExpand" to true, "isAnimate" to true)
+                        } else {
+                            activityVm.isExpandToolbarListener.value =
+                                mapOf(
+                                    "isExpand" to true,
+                                    "isAnimate" to true,
+                                    "isFastAnimate" to false
+                                )
+                            isFastAnimate = true
+                        }
                     }
                 }
-            })
+            }
+
         }
 
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding?.apply {
+            viewPager.adapter = null
+            viewPager.unregisterOnPageChangeCallback(viewpagerCallback)
+        }
+        mediator?.detach()
+        mediator = null
         _binding = null
     }
 

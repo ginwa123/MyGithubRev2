@@ -1,4 +1,4 @@
-package com.m.ginwa.mygithubrev2.ui.detailuserfragment.biofragment
+package com.m.ginwa.mygithubrev2.ui.detailuser.bio
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,23 +10,20 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.m.ginwa.core.data.Result
 import com.m.ginwa.core.domain.model.User
+import com.m.ginwa.core.utils.EspressoIdlingResources
 import com.m.ginwa.core.utils.showToast
 import com.m.ginwa.mygithubrev2.R
 import com.m.ginwa.mygithubrev2.databinding.FragmentBioBinding
 import com.m.ginwa.mygithubrev2.ui.ActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class BioFragment : Fragment() {
 
     private var login: String? = null
-    private var btFavorite: FloatingActionButton? = null
     private var _binding: FragmentBioBinding? = null
     private val binding get() = _binding
     private val fragmentVm: BioViewModel by viewModels()
@@ -35,9 +32,8 @@ class BioFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         login = arguments?.getString("login")
-        lifecycleScope.launch {
-            fragmentVm.getUser(login ?: "ginwa")
-        }
+        fragmentVm.login = login ?: "ginwa"
+        fragmentVm.getUser(login ?: "ginwa")
     }
 
     override fun onCreateView(
@@ -53,43 +49,44 @@ class BioFragment : Fragment() {
         setUserProfile(fragmentVm.userData)
         setUserDataListener()
         binding?.swipeRefreshLayout?.setOnRefreshListener {
-            lifecycleScope.launch {
-                fragmentVm.getUser(login ?: "ginwa")
-                setUserDataListener()
-            }
+            fragmentVm.getUser(fragmentVm.login)
+            setUserDataListener()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding?.apply {
+            swipeRefreshLayout.setOnRefreshListener(null)
+        }
         _binding = null
     }
 
     private fun setUserDataListener() {
-        lifecycleScope.launch {
-            fragmentVm.user?.removeObservers(viewLifecycleOwner)
-            fragmentVm.user?.observe(viewLifecycleOwner, { result ->
-                when (result) {
-                    is Result.Success -> setUserProfile(result.data)
-                    is Result.Error -> setError(result.exception.message)
-                    Result.Loading -> setLoading()
-                }
-            })
-        }
+        fragmentVm.user.removeObservers(viewLifecycleOwner)
+        fragmentVm.user.observe(viewLifecycleOwner, { result ->
+            when (result) {
+                is Result.Success -> setUserProfile(result.data)
+                is Result.Error -> setError(result.exception.message)
+                Result.Loading -> setLoading()
+            }
+        })
     }
 
 
     private fun setError(message: String?) {
-        requireContext().showToast(message)
+        requireActivity().showToast(message)
         setCompleted()
     }
 
     private fun setLoading() {
+        EspressoIdlingResources.increment()
         binding?.swipeRefreshLayout?.isRefreshing = true
         activityVm.progressbarListener.value = true
     }
 
     private fun setCompleted() {
+        if (fragmentVm.userData != null) EspressoIdlingResources.decrement()
         activityVm.progressbarListener.value = false
         binding?.swipeRefreshLayout?.isRefreshing = false
     }
@@ -102,11 +99,11 @@ class BioFragment : Fragment() {
                 tvCompany.text = company
                 tvLocation.text = location
                 if (publicRepos != null) tvRepository.text =
-                    String.format("${getString(R.string.repositories)} : $publicRepos")
+                    StringBuilder("${getString(R.string.repositories)} : $publicRepos")
                 if (followers != null) tvFollowers.text =
-                    String.format("${getString(R.string.followers)} : ${followers?.size}")
+                    StringBuilder("${getString(R.string.followers)} : ${followers?.size}")
                 if (following != null) tvFollowings.text =
-                    String.format("${getString(R.string.following)} : ${following?.size}")
+                    StringBuilder("${getString(R.string.following)} : ${following?.size}")
 
                 if (!tvName.text.isNullOrEmpty()) tvNameContainer.visibility = VISIBLE
                 else tvNameContainer.visibility = GONE
@@ -129,23 +126,9 @@ class BioFragment : Fragment() {
                 else tvFollowingContainer.visibility = GONE
 
                 activityVm.imToolbarListener.value = avatarUrl
-                btFavorite = requireActivity().findViewById(R.id.bt_favorite)
-                btFavorite?.visibility = VISIBLE
-                if (isFavorite) btFavorite?.setImageResource(R.drawable.ic_baseline_favorite_24)
-                else btFavorite?.setImageResource(R.drawable.ic_baseline_favorite_border_48)
+                activityVm.btFavoriteListener.value = user
                 fragmentVm.userData = user
-                setBtFavoriteListener(user)
                 setCompleted()
-            }
-        }
-    }
-
-    private fun setBtFavoriteListener(user: User) {
-        binding?.apply {
-            btFavorite?.setOnClickListener {
-                lifecycleScope.launch {
-                    fragmentVm.updateUser(user)
-                }
             }
         }
     }

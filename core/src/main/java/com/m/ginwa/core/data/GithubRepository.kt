@@ -73,9 +73,7 @@ class GithubRepository(
                 return localDataSource.getFollowings(loginParent)
             }
 
-            override suspend fun shouldFetch(data: List<Following>?): Boolean {
-                return true
-            }
+            override suspend fun shouldFetch(data: List<Following>?): Boolean = true
 
             override suspend fun fetchFromNetwork(): ApiResponse<List<FollowingResponse>> {
                 return remoteDataSource.getFollowings(loginParent).single()
@@ -124,29 +122,10 @@ class GithubRepository(
         localDataSource.insertUser(userEntity)
     }
 
-    override suspend fun getUsersFavorite(isFavorite: Boolean): Flow<Result<List<User>>> {
-        return object : NetworkBoundResult<List<User>, UserResponse>() {
-            override suspend fun loadFromDB(): Flow<List<User>> {
-                return localDataSource.getUsers(isFavorite).map {
-                    DataMapper.mapping(it) { entity ->
-                        UserWithFollowersFollowingsEntity.mapToDomain(entity)
-                    }
-                }
-            }
-
-            override suspend fun shouldFetch(data: List<User>?): Boolean {
-                return false
-            }
-
-            override suspend fun fetchFromNetwork(): ApiResponse<UserResponse>? {
-                return null
-            }
-
-            override suspend fun saveFetchResult(dataRemote: UserResponse, dataLocal: List<User>?) {
-
-            }
-
-        }.asFlow()
+    override suspend fun getUsersFavorite(isFavorite: Boolean): Flow<List<User>> {
+        return localDataSource.getUsers(isFavorite).map {
+            UserWithFollowersFollowingsEntity.mapToDomains(it)
+        }
     }
 
 }

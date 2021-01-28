@@ -40,5 +40,9 @@ data class UserWithFollowersFollowingsEntity(
                 isFavorite = input?.userEntity?.isFavorite ?: false
             )
         }
+
+
+        fun mapToDomains(input: List<UserWithFollowersFollowingsEntity>): List<User> =
+            input.map { mapToDomain(it) }
     }
 }

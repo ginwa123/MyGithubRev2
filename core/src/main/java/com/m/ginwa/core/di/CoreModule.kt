@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import com.m.ginwa.core.BuildConfig
 import com.m.ginwa.core.data.GithubRepository
 import com.m.ginwa.core.data.source.local.LocalDataSource
 import com.m.ginwa.core.data.source.local.room.FollowerDao
@@ -19,6 +20,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
+import okhttp3.CertificatePinner
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -27,15 +32,29 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object CoreModule {
-
-
     private const val BASE_URL = "https://api.github.com/"
 
     @Singleton
     @Provides
     fun client(): Retrofit {
+        val token = BuildConfig.GITHUB_TOKEN
+        val httpBuilder = OkHttpClient.Builder()
+        val certificate = CertificatePinner.Builder()
+            .add(BASE_URL, "sha256/ORtIOYkm5k6Nf2tgAK/uwftKfNhJB3QS0Hs608SiRmE=")
+            .add(BASE_URL, "sha256/k2v657xBsOVe1PQRwOsHsw3bsGT2VzIqz5K+59sNQws=")
+            .build()
+        val client = httpBuilder
+            .certificatePinner(certificate)
+            .addInterceptor {
+                val request = it.request().newBuilder()
+                    .addHeader("Authorization", "token $token")
+                    .build()
+                it.proceed(request)
+            }
+            .build()
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -74,7 +93,11 @@ object CoreModule {
     @Provides
     @Singleton
     fun provideDb(@ApplicationContext context: Context): GithubDb {
-        return Room.databaseBuilder(context, GithubDb::class.java, "github.db").build()
+        val passphrase: ByteArray = SQLiteDatabase.getBytes("todo_secret".toCharArray())
+        val factory = SupportFactory(passphrase)
+        return Room.databaseBuilder(context, GithubDb::class.java, "github.db")
+            .openHelperFactory(factory)
+            .build()
     }
 
     @Provides
@@ -95,4 +118,6 @@ object CoreModule {
     fun providePreferenceManager(@ApplicationContext context: Context): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
     }
+
 }
+

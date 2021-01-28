@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".ui.FavoriteFragment">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/tv_notice_container"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -23,7 +23,7 @@
             android:layout_gravity="center|start"
             android:layout_marginStart="8dp"
             android:text="@string/doesn_t_have_favorite_users" />
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

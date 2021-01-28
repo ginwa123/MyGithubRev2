@@ -25,7 +25,7 @@ class LocalDataSource(
     }
 
     fun getUsers(isFavorite: Boolean = true): Flow<List<UserWithFollowersFollowingsEntity>> {
-        return userDao.getUsers(isFavorite)
+        return userDao.getUsers(isFavorite).flowOn(Dispatchers.IO)
     }
 
     fun getUser(login: String): Flow<UserWithFollowersFollowingsEntity?> =
@@ -43,7 +43,7 @@ class LocalDataSource(
         followerDao.getFollowers(loginParent).flowOn(Dispatchers.IO)
 
     fun getFollowings(loginParent: String): Flow<List<Following>> =
-        followingDao.getFollowings(loginParent).flowOn(Dispatchers.Main)
+        followingDao.getFollowings(loginParent).flowOn(Dispatchers.IO)
 
 
 }

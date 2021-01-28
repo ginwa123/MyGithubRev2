@@ -6,9 +6,11 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.1.1"
+        classpath 'com.android.tools.build:gradle:4.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.29.1-alpha'
+        classpath 'com.google.gms:google-services:4.3.4'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -23,4 +25,9 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task clearData(type: Exec) {
+    def clearDataCommand = ['adb', 'shell', 'pm', 'clear', 'com.m.ginwa.mygithubrev2']
+    commandLine clearDataCommand
 }

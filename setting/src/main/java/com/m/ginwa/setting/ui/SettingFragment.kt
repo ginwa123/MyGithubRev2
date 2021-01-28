@@ -7,6 +7,8 @@ import androidx.preference.DropDownPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.m.ginwa.core.di.CoreModuleDependencies
 import com.m.ginwa.core.utils.Constants.THEME
+import com.m.ginwa.core.utils.DisplayTheme
+import com.m.ginwa.core.utils.getEnum
 import com.m.ginwa.setting.R
 import com.m.ginwa.setting.di.DaggerSettingComponent
 import dagger.hilt.android.EntryPointAccessors
@@ -37,7 +39,7 @@ class SettingFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         dropDownPreference = findPreference<DropDownPreference>(THEME) as DropDownPreference
         dropDownPreference.summary =
-            preferenceManager.getString(THEME, getString(R.string.system_default))
+            preferenceManager.getString(THEME, DisplayTheme.DARK.toString())
         setThemeListener()
     }
 
@@ -45,16 +47,16 @@ class SettingFragment : PreferenceFragmentCompat() {
         dropDownPreference.setOnPreferenceChangeListener { preference, newValue ->
             preferenceManager.edit()?.putString(THEME, newValue.toString())?.apply()
             preference.summary = newValue.toString()
-            setTheme()
+            setTheme(preferenceManager.getEnum(THEME, newValue.toString()))
             true
         }
     }
 
-    private fun setTheme() {
-        when (preferenceManager.getString(THEME, null)) {
-            null, "System Default" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            "Light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            "Dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    private fun setTheme(displayTheme: DisplayTheme) {
+        when (displayTheme) {
+            DisplayTheme.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            DisplayTheme.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            DisplayTheme.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 

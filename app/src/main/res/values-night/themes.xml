@@ -10,11 +10,22 @@
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Customize your theme here. -->
-        <item name="android:colorBackground">@color/black</item>
+        <item name="android:windowBackground">@color/background_grey</item>
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
-        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent
-        </item>
         <item name="android:windowTranslucentStatus">true</item>
+
+        <item name="materialCardViewStyle">@style/Theme.MyGithubRev2.Widget.CardView</item>
+        <item name="tabStyle">@style/Theme.MyGithubRev2.Widget.TabLayout</item>
+    </style>
+
+    <style name="Theme.MyGithubRev2.Widget.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabBackground">@color/background_grey</item>
+    </style>
+
+    <style name="Theme.MyGithubRev2.Widget.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardBackgroundColor">@color/card_background_color_grey</item>
     </style>
 
 </resources>
