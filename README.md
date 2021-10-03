@@ -2,7 +2,7 @@
 [![ginwa123](https://circleci.com/gh/ginwa123/MyGithubRev2.svg?style=svg)](https://circleci.com/gh/ginwa123/MyGithubRev2)
 
 My sample code for
-Final submission for Menjadi Android Developer Expert (dicoding courses)
+Final submission Menjadi Android Developer Expert (dicoding courses)
 
 Features:
 
